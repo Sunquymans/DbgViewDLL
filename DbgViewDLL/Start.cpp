@@ -8,6 +8,30 @@
 bool isRun = false;
 HANDLE DBGVIEW = nullptr;
 
+void mytolower(char* s)
+{
+    int len = strlen(s);
+    for (int i = 0; i < len; i++)
+    {
+        if (s[i] >= 'A' && s[i] <= 'Z')
+        {
+            s[i] = tolower(s[i]);
+        }
+    }
+}
+
+void mytoupper(char* s)
+{
+    int len = strlen(s);
+    for (int i = 0; i < len; i++)
+    {
+        if (s[i] >= 'a' && s[i] <= 'z')
+        {
+            s[i] = toupper(s[i]);
+        }
+    }
+}
+
 void GlobalStart()
 {
     if (isRun == false)
@@ -34,16 +58,17 @@ DWORD WINAPI GlobalStartThread(LPVOID lpParam)
         Sleep(300);
         DBGVIEW = GetModuleHandle(nullptr);
     } while (DBGVIEW == nullptr);
+
     const DWORD filterEditAddress = reinterpret_cast<DWORD>(DBGVIEW) + 0x86720;
     const DWORD filterRealAddress = reinterpret_cast<DWORD>(DBGVIEW) + 0x88240;
 
-    auto filterEdit = const_cast<char*>("TuRingLogger");
+    GetPrivateProfileStringA("DebugView", "Filter", "", buffer, sizeof(buffer), buffer);
 
-    char* filterRead;
-    _strupr_s(filterRead = _strdup(filterEdit), strlen(filterEdit) + 1);
+    char filterValue[] = "TuRingLogger";
+    Raw::wpm(filterEditAddress, filterValue, sizeof(filterValue));
 
-    Raw::wpm(filterEditAddress, filterEdit, sizeof(filterEdit));
-    Raw::wpm(filterRealAddress, filterRead, sizeof(filterRead));
+    mytoupper(filterValue);
+    Raw::wpm(filterRealAddress, filterValue, sizeof(filterValue));
 
     return 0;
 }

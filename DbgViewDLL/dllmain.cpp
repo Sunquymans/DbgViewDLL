@@ -37,7 +37,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, const DWORD ulReasonForCall, LPVOID lpRes
     return TRUE;
 }
 
-int WINAPI _SunquymanA()
+int WINAPI Dbgview()
 {
     return 0;
 }
